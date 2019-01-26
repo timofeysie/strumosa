@@ -80,10 +80,27 @@ Changed const to let and got this error:
   1:5  error  Parsing error: Unexpected token http
 ```
 
-This [SO](https://stackoverflow.com/questions/36001552/eslint-parsing-error-unexpected-token) answer talks about the problems with a react file and ES5/6 differences.
+This [SO](https://stackoverflow.com/questions/36001552/eslint-parsing-error-unexpected-token) answer says unexpected token errors in ESLint parsing occur due to incompatibility between the development environment and ESLint's current parsing capabilities with the ongoing changes with JavaScripts.
 
 As of now, we cannot ignore this setting as it is in some Google file we will have to find.
 
+The recomended fix for the const keyword error is this in the eslintrc file:
+```
+{
+    "parserOptions": {
+        "ecmaVersion": 2017
+    },
+
+    "env": {
+        "es6": true
+    }
+}
+```
+
+But this doesn't work for us.
+Then I realized that my answer to use a JS style of lint file in the init process created another .eslintrc file with a .js extension, and my changes the the .eslintrc were not taking effect.  Removed the Google styles and configured them manually and now it works.
+
+Next is making it run as part of a build pipeline.
 
 
 ## Getting started
