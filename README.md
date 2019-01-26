@@ -18,11 +18,9 @@ Prepare for deployment
 zip -r myAppFiles.zip .
 ```
 
-## Setting up a build process
+## Linting
 
-### Linting
-
-The standard is [ESlint](https://eslint.org/docs/developer-guide/nodejs-api).
+The standard is [ESlint](https://eslint.org/docs/developer-guide/nodejs-api).  Setting it up goes something like this.
 
 ```
 npm install eslint --save-dev
@@ -35,16 +33,15 @@ npm run lint -- --init
   Standard (https://github.com/standard/standard) 
   Google (https://github.com/google/eslint-config-google) 
 ```
+
 Airbnb standard or Google?
 *If you prefer a lighter touch from your linter, Google is probably the best choice. If you are interested in having a strongly opinionated linter that provides additional validation and React support out of the box, AirBnB is the style guide for you.* ([source](https://medium.com/@uistephen/style-guides-for-linting-ecmascript-2015-eslint-common-google-airbnb-6c25fd3dff0)).
+
 I chose Google since this server app will be used with Angular.  If it was React then I would have gone for Airbnb.  Anyhow, running the linter for the first time results in this output:
 ```
 $ npm run lint
-
 > app-service-hello-world@0.0.1 lint /Users/tim/node/azure/nodejs-docs-hello-world-master
 > eslint **/*.js
-
-
 /Users/tim/node/azure/nodejs-docs-hello-world-master/index.js
    1:1   error  Unexpected var, use let or const instead      no-var
    3:1   error  Unexpected var, use let or const instead      no-var
@@ -55,10 +52,8 @@ $ npm run lint
    5:18  error  Strings must use singlequote                  quotes
    8:1   error  Unexpected var, use let or const instead      no-var
   11:13  error  Strings must use singlequote                  quotes
-
 ✖ 9 problems (9 errors, 0 warnings)
   6 errors and 0 warnings potentially fixable with the `--fix` option.
-
 npm ERR! Darwin 18.2.0
 npm ERR! argv "/Users/tim/.nvm/versions/node/v6.9.2/bin/node" "/Users/tim/.nvm/versions/node/v6.9.2/bin/npm" "run" "lint"
 npm ERR! node v6.9.2
@@ -73,15 +68,22 @@ npm ERR! Failed at the app-service-hello-world@0.0.1 lint script 'eslint **/*.js
 Since the reporting is set for errors not warnings, npm exits.  Probably we want to change this.
 First of all, any lib using var in 2019 has problems.  So right out of the box I am questioning Microsoft's ability to keep up.  Yes, they made VSCode which I'm using right now.  But that's one team out of many.  The people running Azure don't pay much attention to NodeJS to ship an example app using var.
 
-Rant over.
+Rant over.  I would prefer tabs of 4 spaces but couldn't easily figure out how to modify the Google style guide and am not that attached to it.  Single quotes, of course.
 
-Then create an ```.eslintrc``` file.  Or alternatively, install globally and generate the file with a command:
+But still getting this error:
 ```
-npm install eslint -g
-eslint --init // this will generate the .eslint file for you.
+  3:1  error  Parsing error: The keyword 'const' is reserved
 ```
 
-I chose the first option.
+Changed const to let and got this error:
+```
+  1:5  error  Parsing error: Unexpected token http
+```
+
+This [SO](https://stackoverflow.com/questions/36001552/eslint-parsing-error-unexpected-token) answer talks about the problems with a react file and ES5/6 differences.
+
+As of now, we cannot ignore this setting as it is in some Google file we will have to find.
+
 
 
 ## Getting started
