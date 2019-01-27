@@ -164,9 +164,14 @@ http.createServer((request, response) => {
 ```
 
 Got us down to ```7 problems (6 errors, 1 warning)```.  Going to try the --fix option now.
+```
+  11:1  warning  Unexpected console statement  no-console
+✖ 1 problem (0 errors, 1 warning)
+```
 
+That was great.  Might leave that flag in the package.json script for good.
 
-Another thing we need to do is create the src directory and move our code there.  That's a basic best practice.
+Another thing we need to do is create the src directory and move our code there.  That's a basic best practice.  But, not sure how having the index file in a sub directory will affect our Azure deployment, so going to hold off on moving the index file there for now.  Everything else can go there.
 
 
 

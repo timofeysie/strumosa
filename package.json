@@ -6,7 +6,7 @@
   "license": "MIT",
   "author": "TB Curchod",
   "scripts": {
-    "lint": "eslint **/*.js",
+    "lint": "eslint **/*.js --fix",
     "test": "jest src",
     "coverage": "jest --collectCoverageFrom=src/**.js --coverage src",
     "start": "node index.js"
