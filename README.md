@@ -116,7 +116,7 @@ This [SO](https://stackoverflow.com/questions/36001552/eslint-parsing-error-unex
 
 As of now, we cannot ignore this setting as it is in some Google file we will have to find.
 
-The recomended fix for the const keyword error is this in the eslintrc file:
+The recommended fix for the const keyword error is this in the eslintrc file:
 ```
 {
     "parserOptions": {
@@ -309,8 +309,16 @@ const user = await User
 
 ### CI Choices
 
-Jenkins - complex setup 
-CircleCI - flexible CI pipeline without the burden of managing the whole infrastructure
+A pipeline that includes linting, testing and deployments is a standard feature of the modern DevOps experience.  Our basic choices are:
+* Jenkins - complex setup 
+* CircleCI - flexible CI pipeline without the burden of managing the whole infrastructure
+* Azure DevOps Pipeline - Makes sense for an Azure deployment, but is it free?
+
+I've used Jenkins before, so I'd like to find out more about CircleCI.
+*Each project repository has its own build pipeline and generates a Docker image which is pushed to a Docker registry. Finally, it does a commit to the Helm Chart repo in the initial, Staging branch. Separating the Deployment pipeline from the individual projects is a foundational element of larger scale microservice architectures. It provides a clear view and history of a logical part of the application stack, archived in version control.*
+
+
+
 
 
 ### Testing
@@ -546,6 +554,12 @@ http://strumosa.azurewebsites.net
 Deploying the site after doing the zip of the project as described previously can be accomplished following [this link](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-get-started-nodejs#deploy-zip-file) which says you can drag the zip to the file explorer area on the web page.  The web page I'm assuming is the Azure dashboard.  However, going to the website address of the deployment, we don't seem to get the message from the node app.
 
 Re-reading the deployment page it shows we can go to our [deployment page](https://strumosa.scm.azurewebsites.net/ZipDeployUI) and drop the zip there.  It took a while to unpack, but now the server is serving.  Time for lunch.
+
+After switching to Airbnb linting with Jest testing and coverage, doing a deployment with the workflow used in the morning created a 30MB zip file as opposed to the 6MB file created this morning.  This is because the node_modules devDependencies section has grown, and all those dev dependencies went into the bundle that didn't need to be there.  Actually we don't even *have* a production dependencies section in the package.json file yet as there are none.  The app does run, which is what we wanted to test after the linting changes using the --fix flag and all.
+
+There will be some dependencies after we add Express later, but this is not a good deployment process.  [This SO](https://stackoverflow.com/questions/30509490/azure-web-apps-service-auto-install-npm-modules-from-package-json) answer shows that Azure can install the dep from the package file.  However, there is no link there to how to deploy in any other way than we learned how to do with the zip drag and drop method.  Time for another look at the Azure docs.
+
+We do want to use the Circle CI, so maybe we should jump directly to a CI pipeline instead.
 
 
 #
