@@ -124,27 +124,157 @@ az app service list-locations --sku FREE
 Create a resource group
 ```
 az group create --name myResourceGroup --location "South Central US"
-```
+{
+  "id": "/subscriptions/ad130dfc-ad9f-4c52-adf9-ea9bfa73670e/resourceGroups/myResourceGroup",
+  "location": "southcentralus",
+  "managedBy": null,
+  "name": "myResourceGroup",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null
+}```
+
+
 
 Creates an App Service plan
 ```
 az appservice plan create --name myAppServicePlan --resource-group myResourceGroup --sku FREE
+{
+  "adminSiteName": null,
+  "freeOfferExpirationTime": null,
+  "geoRegion": "South Central US",
+  "hostingEnvironmentProfile": null,
+  "hyperV": false,
+  "id": "/subscriptions/ad130dfc-ad9f-4c52-adf9-ea9bfa73670e/resourceGroups/myResourceGroup/providers/Microsoft.Web/serverfarms/myAppServicePlan",
+  "isSpot": false,
+  "isXenon": false,
+  "kind": "app",
+  "location": "South Central US",
+  "maximumNumberOfWorkers": 1,
+  "name": "myAppServicePlan",
+  "numberOfSites": 0,
+  "perSiteScaling": false,
+  "provisioningState": "Succeeded",
+  "reserved": false,
+  "resourceGroup": "myResourceGroup",
+  "sku": {
+    "capabilities": null,
+    "capacity": 0,
+    "family": "F",
+    "locations": null,
+    "name": "F1",
+    "size": "F1",
+    "skuCapacity": null,
+    "tier": "Free"
+  },
+  "spotExpirationTime": null,
+  "status": "Ready",
+  "subscription": "ad130dfc-ad9f-4c52-adf9-ea9bfa73670e",
+  "tags": null,
+  "targetWorkerCount": 0,
+  "targetWorkerSizeId": 0,
+  "type": "Microsoft.Web/serverfarms",
+  "workerTierName": null
+}
 ```
 
 Create a web app in the myAppServicePlan App Service plan 
 ```
-az webapp create --resource-group myResourceGroup --plan myAppServicePlan --name <app_name>
+az webapp create --resource-group myResourceGroup --plan myAppServicePlan --name strumosa
+{
+  "availabilityState": "Normal",
+  "clientAffinityEnabled": true,
+  "clientCertEnabled": false,
+  "cloningInfo": null,
+  "containerSize": 0,
+  "dailyMemoryTimeQuota": 0,
+  "defaultHostName": "strumosa.azurewebsites.net",
+  "enabled": true,
+  "enabledHostNames": [
+    "strumosa.azurewebsites.net",
+    "strumosa.scm.azurewebsites.net"
+  ],
+  "ftpPublishingUrl": "ftp://waws-prod-sn1-151.ftp.azurewebsites.windows.net/site/wwwroot",
+  "hostNameSslStates": [
+    {
+      "hostType": "Standard",
+      "ipBasedSslResult": null,
+      "ipBasedSslState": "NotConfigured",
+      "name": "strumosa.azurewebsites.net",
+      "sslState": "Disabled",
+      "thumbprint": null,
+      "toUpdate": null,
+      "toUpdateIpBasedSsl": null,
+      "virtualIp": null
+    },
+    {
+      "hostType": "Repository",
+      "ipBasedSslResult": null,
+      "ipBasedSslState": "NotConfigured",
+      "name": "strumosa.scm.azurewebsites.net",
+      "sslState": "Disabled",
+      "thumbprint": null,
+      "toUpdate": null,
+      "toUpdateIpBasedSsl": null,
+      "virtualIp": null
+    }
+  ],
+  "hostNames": [
+    "strumosa.azurewebsites.net"
+  ],
+  "hostNamesDisabled": false,
+  "hostingEnvironmentProfile": null,
+  "httpsOnly": false,
+  "hyperV": false,
+  "id": "/subscriptions/ad130dfc-ad9f-4c52-adf9-ea9bfa73670e/resourceGroups/myResourceGroup/providers/Microsoft.Web/sites/strumosa",
+  "identity": null,
+  "isDefaultContainer": null,
+  "isXenon": false,
+  "kind": "app",
+  "lastModifiedTimeUtc": "2019-01-26T21:41:07.523333",
+  "location": "South Central US",
+  "maxNumberOfWorkers": null,
+  "name": "strumosa",
+  "outboundIpAddresses": "13.66.38.99,13.66.35.170,13.66.36.236,13.66.32.249,52.171.63.58",
+  "possibleOutboundIpAddresses": "13.66.38.99,13.66.35.170,13.66.36.236,13.66.32.249,52.171.63.58,40.124.44.122,70.37.55.197,70.37.50.96",
+  "repositorySiteName": "strumosa",
+  "reserved": false,
+  "resourceGroup": "myResourceGroup",
+  "scmSiteAlsoStopped": false,
+  "serverFarmId": "/subscriptions/ad130dfc-ad9f-4c52-adf9-ea9bfa73670e/resourceGroups/myResourceGroup/providers/Microsoft.Web/serverfarms/myAppServicePlan",
+  "siteConfig": null,
+  "slotSwapStatus": null,
+  "state": "Running",
+  "suspendedTill": null,
+  "tags": null,
+  "targetSwapSlot": null,
+  "trafficManagerHostNames": null,
+  "type": "Microsoft.Web/sites",
+  "usageState": "Normal"
+}
 ```
 
 Set the Node runtime to 8.11.1. To see all supported runtimes, run az webapp list-runtimes.
 ```
-az webapp config appsettings set --resource-group myResourceGroup --name <app_name> --settings WEBSITE_NODE_DEFAULT_VERSION=8.11.1
+az webapp config appsettings set --resource-group myResourceGroup --name strumosa --settings WEBSITE_NODE_DEFAULT_VERSION=8.11.1
+[
+  {
+    "name": "WEBSITE_NODE_DEFAULT_VERSION",
+    "slotSetting": false,
+    "value": "8.11.1"
+  }
+]
 ```
 
+The website should be available at
 ```
-http://<app_name>.azurewebsites.net
+http://strumosa.azurewebsites.net
 ```
 
+Deploying the site after doing the zip of the project as described previously can be accomplished following [this link](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-get-started-nodejs#deploy-zip-file) which says you can drag the zip to the file explorer area on the web page.  The web page I'm assuming is the Azure dashboard.  However, going to the website address of the deployment, we don't seem to get the message from the node app.
+
+Re-reading the deployment page it shows we can go to our [deployment page](https://strumosa.scm.azurewebsites.net/ZipDeployUI) and drop the zip there.  It took a while to unpack, but now the server is serving.  Time for lunch.
 
 
 
