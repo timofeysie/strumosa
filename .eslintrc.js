@@ -1,20 +1,14 @@
-module.exports ={
-    "env": {
-      "node": 1,
-			"browser": 1,
-			"es6": true
+module.exports = {
+    extends: [
+      'airbnb-base',
+      'plugin:jest/recommended',
+    ],
+    plugins: [
+      'import',
+      'jest',
+    ],
+    env: {
+      node: true,
+      'jest/globals': true,
     },
-    "globals": {
-      "exampleGlobalVariable": true
-    },
-    "parserOptions": {
-			"ecmaVersion": 2017
-    },
-    "rules": {
-        "indent": [ "error",  "tab" ],
-        "linebreak-style": [  "error",  "unix" ],
-        "quotes": [ "error", "single" ],
-        "semi": [ "error", "always" ],
-    },
-    "plugins": [ ]
-};
+  };

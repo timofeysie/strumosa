@@ -37,6 +37,16 @@ Drop the zip file into the [deployment page](https://strumosa.scm.azurewebsites.
 
 
 #
+## Testing
+
+Decided to go with [Jest](https://jestjs.io/docs/en/getting-started.html) due to the easy setup.  The actual tests themselves are very similar to Jasmine, Mocha & Chai.  Using [this source](https://medium.com/@ryanblahnik/setting-up-testing-with-jest-and-node-js-b793f1b5621e) to get started.  This requires switching to [Airbnb linting](https://www.npmjs.com/package/eslint-config-airbnb-base), which will change the linting section which was initially setup with Google, then went to custom.  Airbnb is super strict and is probably a good thing when trying to follow best practices.
+
+After switching the linting and installing Jest and the Jest plugin we are ready to set up a first test as shown in the Jest getting started docs shown above and also shown in the Medium tut.
+
+
+
+
+#
 ## Linting
 
 The standard is [ESlint](https://eslint.org/docs/developer-guide/nodejs-api).  Setting it up goes something like this.
@@ -120,6 +130,45 @@ But this doesn't work for us.
 Then I realized that my answer to use a JS style of lint file in the init process created another .eslintrc file with a .js extension, and my changes the the .eslintrc were not taking effect.  Removed the Google styles and configured them manually and now it works.
 
 Next is making it run as part of a build pipeline.
+
+But when adding Jest testing, it was decided to go with Airbnb after all for its super strict approach.  This was done using this command:
+```
+npx install-peerdeps --dev eslint-config-airbnb-base
+```
+
+We changed the ```.eslintrc.js``` file to include the Jest plugin.  After the first run we get this:
+```
+/Users/tim/node/azure/nodejs-docs-hello-world-master/index.js
+   3:34  warning  Unexpected unnamed function                       func-names
+   3:34  error    Unexpected function expression                    prefer-arrow-callback
+   3:42  error    Missing space before function parentheses         space-before-function-paren
+   4:1   error    Expected indentation of 2 spaces but found 1 tab  indent
+   4:2   error    Unexpected tab character                          no-tabs
+   4:26  error    A space is required after '{'                     object-curly-spacing
+   4:55  error    A space is required before '}'                    object-curly-spacing
+   5:1   error    Expected indentation of 2 spaces but found 1 tab  indent
+   5:2   error    Unexpected tab character                          no-tabs
+  11:1   warning  Unexpected console statement                      no-console
+✖ 10 problems (8 errors, 2 warnings)
+  6 errors and 0 warnings potentially fixable with the `--fix` option.
+```
+
+Wow, that is super strict.  Changing this
+```
+http.createServer(function(request, response) {
+```
+
+To this
+```
+http.createServer((request, response) => {
+```
+
+Got us down to ```7 problems (6 errors, 1 warning)```.  Going to try the --fix option now.
+
+
+Another thing we need to do is create the src directory and move our code there.  That's a basic best practice.
+
+
 
 #
 ## Node Best practices
