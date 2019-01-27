@@ -2,7 +2,10 @@
 
 An Azure NodeJS App.
 
-This is a sample node.js app for an [Azure App Service Web App](https://docs.microsoft.com/azure/app-service-web).
+This is a sample node.js app for deployment as an [Azure App Service](https://docs.microsoft.com/azure/app-service-web).
+
+The project includes implementing NodeJS [best practices](https://github.com/i0natan/nodebestpractices).
+We use [Jest](https://jestjs.io/en/) for testing and coverage with the super strict Airbnb linting.
 
 
 #
@@ -173,6 +176,20 @@ That was great.  Might leave that flag in the package.json script for good.
 
 Another thing we need to do is create the src directory and move our code there.  That's a basic best practice.  But, not sure how having the index file in a sub directory will affect our Azure deployment, so going to hold off on moving the index file there for now.  Everything else can go there.
 
+Here is a list of the AirBnB linting requirements:
+* Semicolon: Required
+* Trailing Commas: Required
+* Template strings: Prefer
+* Import Extensions: None
+* Space before function parentheses: None
+* Object Curly Spacing: Yes
+* Array Bracket Spacing: None
+* Underscored functions: None
+* Object Destructuring: Prefer
+* React Ordering: Opinionated
+* React Prop Validation: Required
+* Arrow Functions Return Assignment: No
+* Object Property Shorthand: Prefer
 
 
 #
@@ -300,7 +317,43 @@ CircleCI - flexible CI pipeline without the burden of managing the whole infrast
 
 Test should run when a developer saves or commits a file, full end-to-end tests usually run when a new pull request is submitted
 
-tagging tests with keywords like #cold #api #sanity so you can grep with your testing harness and invoke the desired subset. For example, this is how you would invoke only the sanity test group with Mocha: mocha --grep 'sanity'
+Tagging tests with keywords like #cold #api #sanity so you can grep with your testing harness and invoke the desired subset. For example, this is how you would invoke only the sanity test group with Mocha: mocha --grep 'sanity'
+
+Implementing Jest with a first demo run produces this result:
+```
+$ npm run test
+> app-service-hello-world@0.0.1 test /Users/tim/node/azure/nodejs-docs-hello-world-master
+> jest src
+ PASS  src/demo/sum.test.js (26.78s)
+  ✓ adds 1 + 2 to equal 3 (5ms)
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        52.654s
+Ran all test suites matching /src/i.
+```
+
+Jest also comes with coverage which also runs the tests.  That's easier than having to setup Istanbul or NYC or something else.
+```
+$ npm run coverage
+> app-service-hello-world@0.0.1 coverage /Users/tim/node/azure/nodejs-docs-hello-world-master
+> jest --collectCoverageFrom=src/**.js --coverage src
+ PASS  src/demo/sum.test.js (25.862s)
+  ✓ adds 1 + 2 to equal 3 (6ms)
+----------|----------|----------|----------|----------|-------------------|
+File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+----------|----------|----------|----------|----------|-------------------|
+All files |        0 |        0 |        0 |        0 |                   |
+----------|----------|----------|----------|----------|-------------------|
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        65.804s
+Ran all test suites matching /src/i.
+```
+
+How is it faster to run coverage with tests than just tests alone?  Anyhow, why is there zero coverage?
+
 
 ### Code coverage tools 
 
