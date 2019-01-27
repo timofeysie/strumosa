@@ -5,6 +5,17 @@ An Azure NodeJS App.
 This is a sample node.js app for an [Azure App Service Web App](https://docs.microsoft.com/azure/app-service-web).
 
 
+#
+## Table of Contents
+
+1. [Workflow](#workflow)
+1. [Linting](#linting)
+1. [Node best practices](#node-best-practices)
+1. [Getting started](#getting-started)
+1. [Contributing](#contributing)
+
+
+#
 ## Workflow
 
 Run locally
@@ -12,12 +23,20 @@ Run locally
 npm start
 ```
 
+Lint the source
+```
+npm run lint
+```
 
 Prepare for deployment
 ```
 zip -r myAppFiles.zip .
 ```
 
+Drop the zip file into the [deployment page](https://strumosa.scm.azurewebsites.net/ZipDeployUI).
+
+
+#
 ## Linting
 
 The standard is [ESlint](https://eslint.org/docs/developer-guide/nodejs-api).  Setting it up goes something like this.
@@ -102,14 +121,160 @@ Then I realized that my answer to use a JS style of lint file in the init proces
 
 Next is making it run as part of a build pipeline.
 
+#
+## Node Best practices
 
+In an effort to better define the code in the server app, we're going to be applying the Node best practices described [here](https://github.com/i0natan/nodebestpractices).  Below are some notes to get started with.
+
+
+### Code structure
+
+Put modules/libraries in a folder, place an index.js file that exposes the module's internals so every consumer will pass through it. This serves as an 'interface' and eases future changes without breaking the contract.
+
+Instead of this:
+```
+module.exports.SMSProvider = require('./SMSProvider/SMSProvider.js');
+module.exports.SMSNumberResolver = require('./SMSNumberResolver/SMSNumberResolver.js');
+```
+
+Do this:
+```
+module.exports.SMSProvider = require('./SMSProvider');
+module.exports.SMSNumberResolver = require('./SMSNumberResolver');
+```
+
+Component folder example
+```
+index
+model
+modelAPI
+modelController
+modelDAL
+modelError
+modelService
+modelTesting
+```
+
+Separate the Express definition to at least two files: 
+1. the API declaration (app.js) 
+2. the networking concerns (WWW). 
+
+Locate API declarations within components.
+
+keys can be read from file and from environment variable.
+secrets are kept outside committed code
+config is hierarchical for easier findability. 
+(example packages: rc, nconf and config)
+
+
+
+### Async error handling
+Async-await instead enables a much more compact code syntax like try-catch.
+
+```
+var userDetails;
+function initialize() {
+    // Setting URL and headers for request
+    var options = {
+        url: 'https://api.github.com/users/narenaryan',
+        headers: {
+            'User-Agent': 'request'
+        }
+    };
+    // Return new promise 
+    return new Promise(function(resolve, reject) {
+     // Do async job
+        request.get(options, function(err, resp, body) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(JSON.parse(body));
+            }
+        })
+    })
+}
+```
+[[source](https://medium.com/@tkssharma/writing-neat-asynchronous-node-js-code-with-promises-async-await-fa8d8b0bcd7c)]
+
+
+### Use async/await and promises
+
+Add some helper functions
+```
+throwError = (code, errorType, errorMessage) => error => {
+  if (!error) error = new Error(errorMessage || 'Default Error')
+  error.code = code
+  error.errorType = errorType
+  throw error
+}
+throwIf = (fn, code, errorType, errorMessage) => result => {
+  if (fn(result)) {
+    return throwError(code, errorType, errorMessage)()
+  }
+  return result
+}
+sendSuccess = (res, message) => data => {
+  res.status(200).json({type: 'success', message, data})
+}
+sendError = (res, status, message) => error => {
+  res.status(status || error.status).json({
+    type: 'error', 
+    message: message || error.message, 
+    error
+  })
+}
+// handle both Not Found and Error cases in one command
+const user = await User
+  .findOne({where: {login: req.body.login}})
+  .then(
+    throwIf(r => !r, 400, 'not found', 'User Not Found'),
+    throwError(500, 'sequelize error')
+  )
+//<-- After that we can use `user` variable, it's not empty
+```
+[[source](https://codeburst.io/node-express-async-code-and-error-handling-121b1f0e44ba)]
+
+
+
+### CI Choices
+
+Jenkins - complex setup 
+CircleCI - flexible CI pipeline without the burden of managing the whole infrastructure
+
+
+### Testing
+
+Test should run when a developer saves or commits a file, full end-to-end tests usually run when a new pull request is submitted
+
+tagging tests with keywords like #cold #api #sanity so you can grep with your testing harness and invoke the desired subset. For example, this is how you would invoke only the sanity test group with Mocha: mocha --grep 'sanity'
+
+### Code coverage tools 
+
+Like 
+```
+Istanbul
+NYC
+```
+
+### Static analysis 
+
+Tools for the CI build should fail when it finds code smells. 
+For example, detect duplications, perform advanced analysis (e.g. code complexity) and follow the history and progress of code issues. 
+
+Options:
+```
+Sonarqube (2,600+ stars)
+Code Climate (1,500+ stars)
+```
+
+# 
 ## Getting started
 
 NodeJS [Azure getting started docs](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-get-started-nodejs)
 
 Create an account and login to the [portal](https://portal.azure.com).
 
-Install the CLI and log
+Install the CLI and login
 ```
 brew update && brew install azure-cli
 ...
@@ -133,9 +298,8 @@ az group create --name myResourceGroup --location "South Central US"
     "provisioningState": "Succeeded"
   },
   "tags": null
-}```
-
-
+}
+```
 
 Creates an App Service plan
 ```
@@ -277,7 +441,7 @@ Deploying the site after doing the zip of the project as described previously ca
 Re-reading the deployment page it shows we can go to our [deployment page](https://strumosa.scm.azurewebsites.net/ZipDeployUI) and drop the zip there.  It took a while to unpack, but now the server is serving.  Time for lunch.
 
 
-
+#
 ## Contributing
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
